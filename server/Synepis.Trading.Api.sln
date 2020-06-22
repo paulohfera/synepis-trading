@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B0F12F8-DB9E-4E4D-A894-B769F579EF83}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{04D76B90-6242-44C2-A84A-42C35461EFE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synepis.Trading.Api.Account", "Account\Synepis.Trading.Api.Account.csproj", "{5F2CD874-A14F-482A-B54B-21DEB7EF4D09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F2CD874-A14F-482A-B54B-21DEB7EF4D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2CD874-A14F-482A-B54B-21DEB7EF4D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F2CD874-A14F-482A-B54B-21DEB7EF4D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F2CD874-A14F-482A-B54B-21DEB7EF4D09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F2CD874-A14F-482A-B54B-21DEB7EF4D09} = {04D76B90-6242-44C2-A84A-42C35461EFE6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4CDF5CA-5B9C-46A8-93BE-2032A902DDA4}
+	EndGlobalSection
+EndGlobal

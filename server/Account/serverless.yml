@@ -1,0 +1,56 @@
+service: SynepisTrading-Account
+provider:
+  name: aws
+  runtime: dotnetcore3.1
+  stage: dev
+  region: us-east-1
+
+package:
+  individually: true
+
+functions:
+  Register:
+    handler: Synepis.Trading.Api.Account::Synepis.Trading.Api.Account.Function::Register
+    package:
+      artifact: bin/Release/netcoreapp3.1/Synepis.Trading.Api.Account.zip
+    events:
+      - http:
+          path: /register
+          method: post
+          cors: true
+  Login:
+    handler: Synepis.Trading.Api.Account::Synepis.Trading.Api.Account.Function::Login
+    package:
+      artifact: bin/Release/netcoreapp3.1/Synepis.Trading.Api.Account.zip
+    events:
+      - http:
+          path: /login
+          method: post
+          cors: true
+  ChangePassword:
+    handler: Synepis.Trading.Api.Account::Synepis.Trading.Api.Account.Function::ChangePassword
+    package:
+      artifact: bin/Release/netcoreapp3.1/Synepis.Trading.Api.Account.zip
+    events:
+      - http:
+          path: /changepassword
+          method: post
+          cors: true
+  ResetPassword:
+    handler: Synepis.Trading.Api.Account::Synepis.Trading.Api.Account.Function::ResetPassword
+    package:
+      artifact: bin/Release/netcoreapp3.1/Synepis.Trading.Api.Account.zip
+    events:
+      - http:
+          path: /resetpassword
+          method: post
+          cors: true
+  ResetPasswordConfirm:
+    handler: Synepis.Trading.Api.Account::Synepis.Trading.Api.Account.Function::ResetPasswordConfirm
+    package:
+      artifact: bin/Release/netcoreapp3.1/Synepis.Trading.Api.Account.zip
+    events:
+      - http:
+          path: /resetpasswordconfirm
+          method: post
+          cors: true
