@@ -6,10 +6,12 @@ using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Runtime;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Synepis.Trading.Api.Account.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -17,12 +19,20 @@ using System.Threading.Tasks;
 namespace Synepis.Trading.Api.Account
 {
 	public class Function : FunctionBase
-    {
-		string AwsPoolId = "xxxxxxxx";
-		string AwsAppClientId = "xxxxxxxxxx";
-		string awsAccessKeyId = "xxxxxxxxxxx";
-		string awsSecretAccessKey = "xxxxxxxxxxxx";
-		RegionEndpoint AwsRegion = RegionEndpoint.GetBySystemName("us-east-1");
+	{
+		public static IConfigurationRoot Configuration { get; set; }
+		public static AppSettings appSettings { get; set; }
+
+		public Function()
+		{
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", false, true);
+
+			var config = builder.Build();
+
+			appSettings = config.GetSection("AppSettings").Get<AppSettings>();
+		}
 
 		public async Task<APIGatewayProxyResponse> Register(APIGatewayProxyRequest request)
 		{
@@ -30,8 +40,8 @@ namespace Synepis.Trading.Api.Account
 			{
 				var viewModel = JsonConvert.DeserializeObject<RegisterViewModel>(request.Body);
 
-				var provider = new AmazonCognitoIdentityProviderClient(awsAccessKeyId, awsSecretAccessKey, AwsRegion);
-				var signup = new SignUpRequest { ClientId = AwsAppClientId, Username = viewModel.Email, Password = viewModel.Password };
+				var provider = new AmazonCognitoIdentityProviderClient(appSettings.AwsAccessKeyId, appSettings.AwsSecretAccessKey, RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
+				var signup = new SignUpRequest { ClientId = appSettings.AwsAppClientId, Username = viewModel.Email, Password = viewModel.Password };
 				var atributes = new List<AttributeType> {
 					new AttributeType { Name = "name", Value = viewModel.Name },
 					new AttributeType { Name = "email", Value = viewModel.Email },
@@ -40,7 +50,7 @@ namespace Synepis.Trading.Api.Account
 
 				var result = await provider.SignUpAsync(signup);
 
-				var addUserToGroupRequest = new AdminAddUserToGroupRequest { GroupName = "Free", UserPoolId = AwsPoolId, Username = viewModel.Email };
+				var addUserToGroupRequest = new AdminAddUserToGroupRequest { GroupName = "Free", UserPoolId = appSettings.AwsPoolId, Username = viewModel.Email };
 				var groupResult = await provider.AdminAddUserToGroupAsync(addUserToGroupRequest);
 
 				return Ok(new { Result = result, GroupResult = groupResult });
@@ -61,9 +71,9 @@ namespace Synepis.Trading.Api.Account
 			{
 				var viewModel = JsonConvert.DeserializeObject<LoginViewModel>(request.Body);
 
-				var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), AwsRegion);
-				var userPool = new CognitoUserPool(AwsPoolId, AwsAppClientId, provider);
-				var user = new CognitoUser(viewModel.Email, AwsAppClientId, userPool, provider);
+				var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
+				var userPool = new CognitoUserPool(appSettings.AwsPoolId, appSettings.AwsAppClientId, provider);
+				var user = new CognitoUser(viewModel.Email, appSettings.AwsAppClientId, userPool, provider);
 
 				var authRequest = new InitiateSrpAuthRequest { Password = viewModel.Password };
 				var response = await user.StartWithSrpAuthAsync(authRequest);
@@ -87,9 +97,9 @@ namespace Synepis.Trading.Api.Account
 			{
 				var viewModel = JsonConvert.DeserializeObject<ChangePasswordViewModel>(request.Body);
 
-				var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), AwsRegion);
-				var userPool = new CognitoUserPool(AwsPoolId, AwsAppClientId, provider);
-				var user = new CognitoUser(viewModel.Email, AwsAppClientId, userPool, provider);
+				var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
+				var userPool = new CognitoUserPool(appSettings.AwsPoolId, appSettings.AwsAppClientId, provider);
+				var user = new CognitoUser(viewModel.Email, appSettings.AwsAppClientId, userPool, provider);
 
 				var authRequest = new InitiateSrpAuthRequest { Password = viewModel.CurrentPassword };
 				var authResponse = await user.StartWithSrpAuthAsync(authRequest);
@@ -116,8 +126,8 @@ namespace Synepis.Trading.Api.Account
 			{
 				var viewModel = JsonConvert.DeserializeObject<ChangePasswordViewModel>(request.Body);
 
-				var provider = new AmazonCognitoIdentityProviderClient(awsAccessKeyId, awsSecretAccessKey, AwsRegion);
-				var passworRequest = new AdminResetUserPasswordRequest { Username = viewModel.Email, UserPoolId = AwsPoolId };
+				var provider = new AmazonCognitoIdentityProviderClient(appSettings.AwsAccessKeyId, appSettings.AwsSecretAccessKey, RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
+				var passworRequest = new AdminResetUserPasswordRequest { Username = viewModel.Email, UserPoolId = appSettings.AwsPoolId };
 
 				var response = await provider.AdminResetUserPasswordAsync(passworRequest);
 
@@ -135,10 +145,10 @@ namespace Synepis.Trading.Api.Account
 			{
 				var viewModel = JsonConvert.DeserializeObject<ResetPasswordConfirmViewModel>(request.Body);
 
-				var provider = new AmazonCognitoIdentityProviderClient(awsAccessKeyId, awsSecretAccessKey, AwsRegion);
+				var provider = new AmazonCognitoIdentityProviderClient(appSettings.AwsAccessKeyId, appSettings.AwsSecretAccessKey, RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
 				var passworRequest = new ConfirmForgotPasswordRequest
 				{
-					ClientId = AwsAppClientId,
+					ClientId = appSettings.AwsAppClientId,
 					ConfirmationCode = viewModel.ConfirmationCode,
 					Password = viewModel.Password,
 					Username = viewModel.Email
