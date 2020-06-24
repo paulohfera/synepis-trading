@@ -1,0 +1,1 @@
+const CACHED_USER = "CACHED_USER";

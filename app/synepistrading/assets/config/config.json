@@ -1,0 +1,4 @@
+{
+	"apiAccount": "https://k1kq7g6fo4.execute-api.us-east-1.amazonaws.com/dev/",
+	"apiForex": "http://localhost:3001/"
+}
