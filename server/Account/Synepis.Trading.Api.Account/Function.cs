@@ -100,7 +100,7 @@ namespace Synepis.Trading.Api.Account
 
 				return Ok(new ResultValueObject(true, null, userResponse));
 			}
-			catch (NotAuthorizedException e)
+			catch (NotAuthorizedException)
 			{
 				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
 			}
@@ -133,7 +133,7 @@ namespace Synepis.Trading.Api.Account
 
 				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
 			}
-			catch (NotAuthorizedException e)
+			catch (NotAuthorizedException)
 			{
 				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
 			}
@@ -156,11 +156,11 @@ namespace Synepis.Trading.Api.Account
 
 				return Ok(new ResultValueObject(false, "VERIFICATION_CODE_SENT"));
 			}
-			catch (NotAuthorizedException e)
+			catch (NotAuthorizedException)
 			{
 				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
 			}
-			catch (UserNotFoundException e)
+			catch (UserNotFoundException)
 			{
 				return Ok(new ResultValueObject(false, "USER_NOT_FOUND"));
 			}
@@ -189,7 +189,7 @@ namespace Synepis.Trading.Api.Account
 
 				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
 			}
-			catch (CodeMismatchException e)
+			catch (CodeMismatchException)
 			{
 				return Ok(new ResultValueObject(false, "CODE_EXPIRED"));
 			}
