@@ -9,9 +9,11 @@ using Amazon.Runtime;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Synepis.Trading.Api.Account.Models;
+using Synepis.Trading.Api.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -41,6 +43,15 @@ namespace Synepis.Trading.Api.Account
 				var viewModel = JsonConvert.DeserializeObject<RegisterViewModel>(request.Body);
 
 				var provider = new AmazonCognitoIdentityProviderClient(appSettings.AwsAccessKeyId, appSettings.AwsSecretAccessKey, RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
+				var userPool = new CognitoUserPool(appSettings.AwsPoolId, appSettings.AwsAppClientId, provider);
+
+
+				//var passwordPolicy = await userPool.GetPasswordPolicyTypeAsync().ConfigureAwait(false);
+				//if (viewModel.Password.Length < passwordPolicy.MinimumLength)
+				//{
+				//	errors.Add(errorDescriber.PasswordTooShort(passwordPolicy.MinimumLength));
+				//}
+
 				var signup = new SignUpRequest { ClientId = appSettings.AwsAppClientId, Username = viewModel.Email, Password = viewModel.Password };
 				var atributes = new List<AttributeType> {
 					new AttributeType { Name = "name", Value = viewModel.Name },
@@ -53,15 +64,15 @@ namespace Synepis.Trading.Api.Account
 				var addUserToGroupRequest = new AdminAddUserToGroupRequest { GroupName = "Free", UserPoolId = appSettings.AwsPoolId, Username = viewModel.Email };
 				var groupResult = await provider.AdminAddUserToGroupAsync(addUserToGroupRequest);
 
-				return Ok(new { Result = result, GroupResult = groupResult });
+				return Ok(new ResultValueObject(false, "WATING_FOR_CONFIRMATION"));
 			}
 			catch (UsernameExistsException)
 			{
-				return Ok("O usuário já existe.");
+				return Ok(new ResultValueObject(false, "USER_ALREADY_EXISTIS"));
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e.Message);
+				return BadRequest(new ResultValueObject(false, e.Message));
 			}
 		}
 
@@ -70,24 +81,32 @@ namespace Synepis.Trading.Api.Account
 			try
 			{
 				var viewModel = JsonConvert.DeserializeObject<LoginViewModel>(request.Body);
-
 				var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), RegionEndpoint.GetBySystemName(appSettings.AwsRegion));
 				var userPool = new CognitoUserPool(appSettings.AwsPoolId, appSettings.AwsAppClientId, provider);
 				var user = new CognitoUser(viewModel.Email, appSettings.AwsAppClientId, userPool, provider);
 
 				var authRequest = new InitiateSrpAuthRequest { Password = viewModel.Password };
-				var response = await user.StartWithSrpAuthAsync(authRequest);
+				var response = await user.StartWithSrpAuthAsync(authRequest).ConfigureAwait(false);
 
-				var getUserRequest = new GetUserRequest
+				var userDetails = await user.GetUserDetailsAsync();
+
+				var userResponse = new UserViewModel
 				{
-					AccessToken = response.AuthenticationResult.AccessToken
+					Email = viewModel.Email,
+					Name = userDetails.UserAttributes.FirstOrDefault(x => x.Name == "name").Value,
+					Token = response.AuthenticationResult.AccessToken,
+					RefreshToken = response.AuthenticationResult.RefreshToken
 				};
 
-				return Ok(response);
+				return Ok(new ResultValueObject(true, null, userResponse));
+			}
+			catch (NotAuthorizedException e)
+			{
+				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e.Message);
+				return BadRequest(new ResultValueObject(false, e.Message));
 			}
 		}
 
@@ -112,7 +131,11 @@ namespace Synepis.Trading.Api.Account
 				};
 				var changePasswordResponse = await provider.ChangePasswordAsync(changePasswordRequest);
 
-				return Ok(changePasswordResponse);
+				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
+			}
+			catch (NotAuthorizedException e)
+			{
+				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
 			}
 			catch (Exception e)
 			{
@@ -131,7 +154,15 @@ namespace Synepis.Trading.Api.Account
 
 				var response = await provider.AdminResetUserPasswordAsync(passworRequest);
 
-				return Ok(response);
+				return Ok(new ResultValueObject(false, "VERIFICATION_CODE_SENT"));
+			}
+			catch (NotAuthorizedException e)
+			{
+				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
+			}
+			catch (UserNotFoundException e)
+			{
+				return Ok(new ResultValueObject(false, "USER_NOT_FOUND"));
 			}
 			catch (Exception e)
 			{
@@ -156,7 +187,11 @@ namespace Synepis.Trading.Api.Account
 
 				var response = await provider.ConfirmForgotPasswordAsync(passworRequest);
 
-				return Ok(response);
+				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
+			}
+			catch (CodeMismatchException e)
+			{
+				return Ok(new ResultValueObject(false, "CODE_EXPIRED"));
 			}
 			catch (Exception e)
 			{

@@ -7,7 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{04D7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{82003ADD-DD7F-4D94-8DA0-902F38C1DC8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synepis.Trading.Api.Account", "Account\Synepis.Trading.Api.Account\Synepis.Trading.Api.Account.csproj", "{C28C3D9E-714B-423F-9877-E72F46D2AB95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synepis.Trading.Api.Account", "Account\Synepis.Trading.Api.Account\Synepis.Trading.Api.Account.csproj", "{C28C3D9E-714B-423F-9877-E72F46D2AB95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synepis.Trading.Api.Core", "Core\Synepis.Trading.Api.Core\Synepis.Trading.Api.Core.csproj", "{C8DF1879-0EA1-4131-B770-6BFA879EE297}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +21,17 @@ Global
 		{C28C3D9E-714B-423F-9877-E72F46D2AB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C28C3D9E-714B-423F-9877-E72F46D2AB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C28C3D9E-714B-423F-9877-E72F46D2AB95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8DF1879-0EA1-4131-B770-6BFA879EE297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8DF1879-0EA1-4131-B770-6BFA879EE297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8DF1879-0EA1-4131-B770-6BFA879EE297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8DF1879-0EA1-4131-B770-6BFA879EE297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C28C3D9E-714B-423F-9877-E72F46D2AB95} = {04D76B90-6242-44C2-A84A-42C35461EFE6}
+		{C8DF1879-0EA1-4131-B770-6BFA879EE297} = {82003ADD-DD7F-4D94-8DA0-902F38C1DC8C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4CDF5CA-5B9C-46A8-93BE-2032A902DDA4}

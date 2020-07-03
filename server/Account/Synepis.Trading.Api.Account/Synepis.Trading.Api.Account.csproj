@@ -17,6 +17,9 @@
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\Synepis.Trading.Api.Core\Synepis.Trading.Api.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Update="appsettings.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
