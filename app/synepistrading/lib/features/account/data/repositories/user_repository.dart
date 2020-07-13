@@ -5,6 +5,7 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/datasources/iuser_remote_data_source.dart';
 import '../../domain/entities/user.dart';
+import '../../domain/exceptions.dart';
 import '../../domain/repositories/iuser_repository.dart';
 import '../models/user_model.dart';
 
@@ -21,7 +22,9 @@ class UserRepository implements IUserRepository {
     try {
       final user = await remoteDataSource.login(email, password);
       return Right(user);
-    } on ServerException {
+    } on UserOrPasswordException catch (_) {
+      return Left(LoginFailure());
+    } on ServerException catch (_) {
       return Left(ServerFailure());
     }
   }

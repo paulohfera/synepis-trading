@@ -31,13 +31,14 @@ void main() {
   group("login", () {
     final name = "user name";
     final email = "user email";
-    final password = "user password";
+    final token = "token";
+    final refreshToken = "refreshToken";
 
     UserModel userModel;
     User user;
 
     setUp(() {
-      userModel = UserModel(name, email, password);
+      userModel = UserModel(name, email, token, refreshToken);
       user = userModel;
     });
 
@@ -47,7 +48,7 @@ void main() {
         // arrange
         setUpNetworkIsConnected();
         // act
-        repository.login(email, password);
+        repository.login(email, token);
         //assert
         verify(mockNetworkInfo.isConnected);
       },
@@ -58,12 +59,11 @@ void main() {
       () async {
         // arrange
         setUpNetworkIsConnected();
-        when(mockRemoteDataSource.login(any, any))
-            .thenAnswer((_) async => userModel);
+        when(mockRemoteDataSource.login(any, any)).thenAnswer((_) async => userModel);
         // act
-        final result = await repository.login(email, password);
+        final result = await repository.login(email, token);
         //assert
-        verify(mockRemoteDataSource.login(email, password));
+        verify(mockRemoteDataSource.login(email, token));
         expect(result, equals(Right(user)));
       },
     );
@@ -75,9 +75,9 @@ void main() {
         setUpNetworkIsConnected();
         when(mockRemoteDataSource.login(any, any)).thenThrow(ServerException());
         // act
-        final result = await repository.login(email, password);
+        final result = await repository.login(email, token);
         //assert
-        verify(mockRemoteDataSource.login(email, password));
+        verify(mockRemoteDataSource.login(email, token));
         expect(result, equals(Left(ServerFailure())));
       },
     );
@@ -86,9 +86,10 @@ void main() {
   group("register", () {
     final name = "user name";
     final email = "user email";
-    final password = "user password";
+    final token = "user password";
+    final refreshToken = "refreshToken";
 
-    final userModel = UserModel(name, email, password);
+    final userModel = UserModel(name, email, token, refreshToken);
     final User user = userModel;
 
     test(

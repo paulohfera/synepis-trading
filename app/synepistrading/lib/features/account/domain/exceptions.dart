@@ -1,0 +1,1 @@
+class UserOrPasswordException implements Exception {}

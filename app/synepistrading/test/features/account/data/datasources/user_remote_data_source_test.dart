@@ -19,30 +19,34 @@ void main() {
   MockHttpClient mockHttpClient;
   MockAppConfig mockAppConfig;
   UserRemoteDataSource dataSource;
-  dynamic jsonData;
   UserModel userModel;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
     mockAppConfig = MockAppConfig();
     dataSource = UserRemoteDataSource(mockHttpClient, mockAppConfig);
-    jsonData = json.decode(fixture("user.json"));
-    userModel = UserModel.fromJson(jsonData);
+    userModel = UserModel.fromJson(json.decode(fixture("user.json")));
   });
 
+  void setUpAppConfig() {
+    when(mockAppConfig.apiAccount).thenAnswer((_) => "http://localhost:8080");
+  }
+
   void setUpMockHttpClientLoginSucess200() {
-    when(mockHttpClient.post(any, data: anyNamed("data"))).thenAnswer(
-        (_) async => Response(data: fixture("user.json"), statusCode: 200));
+    when(mockHttpClient.post(any, data: anyNamed("data")))
+        .thenAnswer((_) async => Response(data: jsonDecode(fixture("login.json")), statusCode: 200));
+    setUpAppConfig();
   }
 
   void setUpMockHttpClientRegisterSucess200() {
     when(mockHttpClient.post(any, data: anyNamed("data")))
         .thenAnswer((_) async => Response(data: true, statusCode: 200));
+    setUpAppConfig();
   }
 
   void setUpMockHttpClientFailure404() {
-    when(mockHttpClient.post(any, data: anyNamed("data"))).thenAnswer(
-        (_) async => Response(data: fixture("user.json"), statusCode: 400));
+    when(mockHttpClient.post(any, data: anyNamed("data"))).thenThrow(ServerException());
+    setUpAppConfig();
   }
 
   group("login", () {
@@ -54,13 +58,12 @@ void main() {
         // act
         dataSource.login("user", "password");
         //assert
-        verify(mockHttpClient
-            .post(any, data: {"email": "user", "password": "password"}));
+        verify(mockHttpClient.post(any, data: {"email": "user", "password": "password"}));
       },
     );
 
     test(
-      "should return Quote when the response code is 200 (sucess)",
+      "should return User when the response code is 200 (sucess)",
       () async {
         // arrange
         setUpMockHttpClientLoginSucess200();
@@ -79,8 +82,7 @@ void main() {
         // act
         final call = dataSource.login;
         //assert
-        expect(() => call("user", "password"),
-            throwsA(TypeMatcher<ServerException>()));
+        expect(() => call("user", "password"), throwsA(TypeMatcher<ServerException>()));
       },
     );
   });

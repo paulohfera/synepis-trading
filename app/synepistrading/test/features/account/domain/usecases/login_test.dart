@@ -24,14 +24,13 @@ void main() {
 
   final login = "teste@teste.com";
   final password = "password";
-  final userModel = UserModel("Synepis", "teste@teste.com", "password");
+  final userModel = UserModel("Synepis", "teste@teste.com", "token", "refreshToken");
 
   test(
     "do user login",
     () async {
       // arrange
-      when(mockUserRespository.login(any, any))
-          .thenAnswer((_) async => Right(userModel));
+      when(mockUserRespository.login(any, any)).thenAnswer((_) async => Right(userModel));
       // act
       final result = await usecase(login, password);
       //assert
@@ -45,8 +44,7 @@ void main() {
     "should cache the data locally when the call to remote data source is sucess",
     () async {
       // arrange
-      when(mockUserRespository.login(any, any))
-          .thenAnswer((_) async => Right(userModel));
+      when(mockUserRespository.login(any, any)).thenAnswer((_) async => Right(userModel));
       // act
       final result = await usecase(login, password);
       //assert

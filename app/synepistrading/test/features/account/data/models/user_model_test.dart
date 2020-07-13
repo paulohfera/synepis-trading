@@ -9,14 +9,14 @@ void main() {
   String jsonText;
 
   setUp(() {
-    userModel = UserModel("name1", "email1@teste.com", "password");
+    userModel = UserModel("name1", "email1@teste.com", "token", "refreshToken");
     jsonText = json.encode(userModel.toJson());
   });
 
   test(
     "should be a subclass of User entity",
     () async {
-      //assert
+      // assert
       expect(userModel, isA<User>());
     },
   );
@@ -28,7 +28,7 @@ void main() {
       final Map<String, dynamic> jsonMap = json.decode(jsonText);
       // act
       final result = UserModel.fromJson(jsonMap);
-      //assert
+      // assert
       expect(result, userModel);
     },
   );
@@ -42,9 +42,10 @@ void main() {
       final expectedMap = {
         "name": "name1",
         "email": "email1@teste.com",
-        "password": "password"
+        "token": "token",
+        "refreshToken": "refreshToken"
       };
-      //assert
+      // assert
       expect(result, expectedMap);
     },
   );

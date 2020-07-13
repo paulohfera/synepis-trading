@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../containers.dart';
-import 'navigation_helper.dart';
-
 abstract class Alert {
-  static var _context = sl.get<NavigationHelper>().navigatorKey.currentState.overlay.context;
-
-  static alert(String title, String text) {
+  static alert(BuildContext context, String title, String text) {
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text("Ok"),
       onPressed: () {
-        Navigator.of(_context).pop();
+        Navigator.of(context).pop();
       },
     );
 
-    AlertDialog dialog = AlertDialog(
-      title: Text(title ?? ""),
-      content: Text(text ?? ""),
-      actions: [
-        okButton,
-      ],
-    );
-
     showDialog(
-      context: _context,
-      builder: (x) => dialog,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title ?? ""),
+          content: Text(text ?? ""),
+          actions: <Widget>[okButton],
+        );
+      },
     );
   }
 }

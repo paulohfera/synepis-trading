@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 import 'package:synepistrading/features/forex/data/models/quote_model.dart';
 import 'package:synepistrading/features/forex/domain/entities/quote.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  final date = DateTime.now();
-  final quoteModel = QuoteModel("EURUSD", 1.24234, date);
+  final date = "2020-06-11 01:33:00";
+  final quoteModel = QuoteModel("EURUSD", 1.13826, DateTime.parse(date));
 
   test(
     "should be a subclass of User entity",
@@ -39,8 +38,8 @@ void main() {
       // act
       final expectedMap = {
         "pair": "EURUSD",
-        "value": 1.24234,
-        "time": DateFormat('yyyy-MM-dd HH:mm:ss').format(date),
+        "value": 1.13826,
+        "time": date,
       };
       //assert
       expect(result, expectedMap);

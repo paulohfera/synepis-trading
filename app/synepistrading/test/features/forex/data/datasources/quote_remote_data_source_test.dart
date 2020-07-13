@@ -30,14 +30,18 @@ void main() {
     quoteModel = QuoteModel.fromJson(jsonData);
   });
 
+  void setUpAppConfig() {
+    when(mockAppConfig.apiForex).thenAnswer((_) => "http://localhost:8080");
+  }
+
   void setUpMockHttpClientSucess200() {
-    when(mockHttpClient.get(any)).thenAnswer(
-        (_) async => Response(data: fixture("quote.json"), statusCode: 200));
+    when(mockHttpClient.get(any)).thenAnswer((_) async => Response(data: fixture("quote.json"), statusCode: 200));
+    setUpAppConfig();
   }
 
   void setUpMockHttpClientFailure404() {
-    when(mockHttpClient.get(any)).thenAnswer(
-        (_) async => Response(data: fixture("quote.json"), statusCode: 400));
+    when(mockHttpClient.get(any)).thenAnswer((_) async => Response(data: fixture("quote.json"), statusCode: 400));
+    setUpAppConfig();
   }
 
   group("getQuote", () {
@@ -51,7 +55,7 @@ void main() {
         // act
         dataSource.getQuote(pair);
         //assert
-        verify(mockHttpClient.get(mockAppConfig.apiForex + pair));
+        verify(mockHttpClient.get(any));
       },
     );
 

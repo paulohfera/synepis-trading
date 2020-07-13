@@ -1,5 +1,10 @@
 {
-	"name": "Syneps Trading",
-	"email": "teste@teste.com",
-	"token": "isufdasdfaskudhfsafbuasdfisayfasgf"
+	"sucess": true,
+	"messages": null,
+	"body": {
+		"name": "name1",
+		"email": "email1@teste.com",
+		"token": "token",
+		"refreshToken": "refreshToken"
+	}
 }

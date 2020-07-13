@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:synepistrading/core/model/logged_user.dart';
 
 import '../../../../core/constants.dart';
 import '../../../../core/error/failure.dart';
@@ -20,12 +19,7 @@ class Login {
     if (result.isLeft()) return result;
 
     var user = result.getOrElse(null);
-    if (user == null) return Left(LoginFailure(message: "Usuário ou senha inválidos."));
-
-    var loggedUser = LoggedUser.fromJson(user.toJson());
-    loggedUser.token = "sdfasdfasdfasdfasdfas";
-
-    var cache = json.encode(loggedUser.toJson());
+    var cache = json.encode(user.toJson());
     await sharedPreferences.setString(CACHED_USER, cache);
     return result;
   }
