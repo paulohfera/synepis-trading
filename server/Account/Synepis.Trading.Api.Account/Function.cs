@@ -64,11 +64,11 @@ namespace Synepis.Trading.Api.Account
 				var addUserToGroupRequest = new AdminAddUserToGroupRequest { GroupName = "Free", UserPoolId = appSettings.AwsPoolId, Username = viewModel.Email };
 				var groupResult = await provider.AdminAddUserToGroupAsync(addUserToGroupRequest);
 
-				return Ok(new ResultValueObject(false, "WATING_FOR_CONFIRMATION"));
+				return Ok(new ResultValueObject(true, "WATING_FOR_CONFIRMATION"));
 			}
 			catch (UsernameExistsException)
 			{
-				return Ok(new ResultValueObject(false, "USER_ALREADY_EXISTIS"));
+				return Ok(new ResultValueObject(true, "USER_ALREADY_EXISTIS"));
 			}
 			catch (Exception e)
 			{
@@ -131,7 +131,7 @@ namespace Synepis.Trading.Api.Account
 				};
 				var changePasswordResponse = await provider.ChangePasswordAsync(changePasswordRequest);
 
-				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
+				return Ok(new ResultValueObject(true, "PASSWORD_CHANGED"));
 			}
 			catch (NotAuthorizedException)
 			{
@@ -154,7 +154,7 @@ namespace Synepis.Trading.Api.Account
 
 				var response = await provider.AdminResetUserPasswordAsync(passworRequest);
 
-				return Ok(new ResultValueObject(false, "VERIFICATION_CODE_SENT"));
+				return Ok(new ResultValueObject(true, "VERIFICATION_CODE_SENT"));
 			}
 			catch (NotAuthorizedException)
 			{
@@ -187,7 +187,7 @@ namespace Synepis.Trading.Api.Account
 
 				var response = await provider.ConfirmForgotPasswordAsync(passworRequest);
 
-				return Ok(new ResultValueObject(false, "PASSWORD_CHANGED"));
+				return Ok(new ResultValueObject(true, "PASSWORD_CHANGED"));
 			}
 			catch (CodeMismatchException)
 			{
