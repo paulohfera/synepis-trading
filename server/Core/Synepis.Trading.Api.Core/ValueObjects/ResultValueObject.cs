@@ -4,30 +4,30 @@ namespace Synepis.Trading.Api.Core.ValueObjects
 {
 	public class ResultValueObject
 	{
-		public bool Sucess { get; set; }
+		public bool Success { get; set; }
 		public IList<string> Messages { get; set; }
 		public object Body { get; set; }
 
-		public ResultValueObject(bool sucess)
+		public ResultValueObject(bool success)
 		{
-			Sucess = sucess;
+			Success = success;
 		}
 
-		public ResultValueObject(bool sucess, string message)
+		public ResultValueObject(bool success, string message)
 		{
-			Sucess = sucess;
+			Success = success;
 			AddMessage(message);
 		}
 
-		public ResultValueObject(bool sucess, IList<string> messages)
+		public ResultValueObject(bool success, IList<string> messages)
 		{
-			Sucess = sucess;
+			Success = success;
 			Messages = messages;
 		}
 
-		public ResultValueObject(bool sucess, IList<string> messages, object body)
+		public ResultValueObject(bool success, IList<string> messages, object body)
 		{
-			Sucess = sucess;
+			Success = success;
 			Messages = messages;
 			Body = body;
 		}
