@@ -9,7 +9,7 @@ void main() {
   String jsonText;
 
   setUp(() {
-    userModel = UserModel("name1", "email1@teste.com", "token", "refreshToken");
+    userModel = UserModel("name1", "email1@teste.com", "asd", "token", "refreshToken");
     jsonText = json.encode(userModel.toJson());
   });
 
@@ -42,6 +42,7 @@ void main() {
       final expectedMap = {
         "name": "name1",
         "email": "email1@teste.com",
+        "password": "asd",
         "token": "token",
         "refreshToken": "refreshToken"
       };

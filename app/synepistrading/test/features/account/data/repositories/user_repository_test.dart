@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:synepistrading/core/error/exceptions.dart';
 import 'package:synepistrading/core/error/failure.dart';
+import 'package:synepistrading/core/model/result_api.dart';
 import 'package:synepistrading/core/network/network_info.dart';
 import 'package:synepistrading/features/account/data/models/user_model.dart';
 import 'package:synepistrading/features/account/data/repositories/user_repository.dart';
@@ -38,7 +39,7 @@ void main() {
     User user;
 
     setUp(() {
-      userModel = UserModel(name, email, token, refreshToken);
+      userModel = UserModel(name, email, null, token, refreshToken);
       user = userModel;
     });
 
@@ -86,19 +87,17 @@ void main() {
   group("register", () {
     final name = "user name";
     final email = "user email";
-    final token = "user password";
-    final refreshToken = "refreshToken";
-
-    final userModel = UserModel(name, email, token, refreshToken);
-    final User user = userModel;
+    final userModel = UserModel(name, email, null, null, null);
+    final resultApi = ResultApi(true, [""], null);
 
     test(
       "should check if the device is online",
       () async {
         // arrange
         setUpNetworkIsConnected();
+        when(mockRemoteDataSource.register(any)).thenAnswer((_) async => resultApi);
         // act
-        repository.register(user);
+        repository.register(userModel);
         //assert
         verify(mockNetworkInfo.isConnected);
       },
@@ -109,11 +108,12 @@ void main() {
       () async {
         // arrange
         setUpNetworkIsConnected();
+        when(mockRemoteDataSource.register(any)).thenAnswer((_) async => resultApi);
         // act
-        final result = await repository.register(user);
+        final result = await repository.register(userModel);
         //assert
-        verify(mockRemoteDataSource.register(user));
-        expect(result, equals(Right(user)));
+        verify(mockRemoteDataSource.register(userModel));
+        expect(result, equals(Right("")));
       },
     );
 
@@ -124,9 +124,103 @@ void main() {
         setUpNetworkIsConnected();
         when(mockRemoteDataSource.register(any)).thenThrow(ServerException());
         // act
-        final result = await repository.register(user);
+        final result = await repository.register(userModel);
         //assert
-        verify(mockRemoteDataSource.register(user));
+        verify(mockRemoteDataSource.register(userModel));
+        expect(result, equals(Left(ServerFailure())));
+      },
+    );
+  });
+
+  group("forgot password", () {
+    final email = "email@email.com";
+    final resultApi = ResultApi(true, [""], null);
+
+    test(
+      "should check if the device is online",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.forgotPassword(any)).thenAnswer((_) async => resultApi);
+        // act
+        repository.forgotPassword(email);
+        //assert
+        verify(mockNetworkInfo.isConnected);
+      },
+    );
+
+    test(
+      "should return remote data when the call to remote data source is sucess",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.forgotPassword(any)).thenAnswer((_) async => resultApi);
+        // act
+        final result = await repository.forgotPassword(email);
+        //assert
+        verify(mockRemoteDataSource.forgotPassword(email));
+        expect(result, equals(Right("")));
+      },
+    );
+
+    test(
+      "should return server fail when the call to remote data source is unsuccesfull",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.forgotPassword(any)).thenThrow(ServerException());
+        // act
+        final result = await repository.forgotPassword(email);
+        //assert
+        verify(mockRemoteDataSource.forgotPassword(email));
+        expect(result, equals(Left(ServerFailure())));
+      },
+    );
+  });
+
+  group("confirm reset password", () {
+    final code = "00000";
+    final email = "email@email.com";
+    final password = "xxx";
+    final resultApi = ResultApi(true, [""], null);
+
+    test(
+      "should check if the device is online",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.confirmForgotPassword(any, any, any)).thenAnswer((_) async => resultApi);
+        // act
+        repository.confirmForgotPassword(code, email, password);
+        //assert
+        verify(mockNetworkInfo.isConnected);
+      },
+    );
+
+    test(
+      "should return remote data when the call to remote data source is sucess",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.confirmForgotPassword(any, any, any)).thenAnswer((_) async => resultApi);
+        // act
+        final result = await repository.confirmForgotPassword(code, email, password);
+        //assert
+        verify(mockRemoteDataSource.confirmForgotPassword(code, email, password));
+        expect(result, equals(Right("")));
+      },
+    );
+
+    test(
+      "should return server fail when the call to remote data source is unsuccesfull",
+      () async {
+        // arrange
+        setUpNetworkIsConnected();
+        when(mockRemoteDataSource.confirmForgotPassword(any, any, any)).thenThrow(ServerException());
+        // act
+        final result = await repository.confirmForgotPassword(code, email, password);
+        //assert
+        verify(mockRemoteDataSource.confirmForgotPassword(code, email, password));
         expect(result, equals(Left(ServerFailure())));
       },
     );

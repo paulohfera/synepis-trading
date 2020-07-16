@@ -6,6 +6,7 @@ abstract class BaseTheme {
   Color background;
   Color buttonColor;
   Color buttonDisabledColor;
+  Color buttonTextColor;
   Color handleColor;
 
   ThemeData get themeData;

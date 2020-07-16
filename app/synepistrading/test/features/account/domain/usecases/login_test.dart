@@ -24,7 +24,7 @@ void main() {
 
   final login = "teste@teste.com";
   final password = "password";
-  final userModel = UserModel("Synepis", "teste@teste.com", "token", "refreshToken");
+  final userModel = UserModel("Synepis", "teste@teste.com", null, "token", "refreshToken");
 
   test(
     "do user login",

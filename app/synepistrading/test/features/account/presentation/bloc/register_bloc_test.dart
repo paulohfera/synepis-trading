@@ -3,20 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:synepistrading/core/constants.dart';
 import 'package:synepistrading/core/error/failure.dart';
-import 'package:synepistrading/features/account/domain/entities/user.dart';
-import 'package:synepistrading/features/account/domain/usecases/login.dart';
-import 'package:synepistrading/features/account/presentation/bloc/login/login_bloc.dart';
+import 'package:synepistrading/features/account/domain/usecases/register.dart';
+import 'package:synepistrading/features/account/presentation/bloc/register/register_bloc.dart';
 
-class MockLogin extends Mock implements Login {}
+class MockRegister extends Mock implements Register {}
 
 void main() {
-  LoginBloc bloc;
-  MockLogin mockLogin;
+  RegisterBloc bloc;
+  MockRegister mockRegister;
 
   setUp(() {
-    mockLogin = MockLogin();
-
-    bloc = LoginBloc(mockLogin);
+    mockRegister = MockRegister();
+    bloc = RegisterBloc(mockRegister);
   });
 
   test(
@@ -28,20 +26,22 @@ void main() {
   );
 
   group(
-    "login",
+    "register",
     () {
-      final user = User("Synapis", "email@email.com", "", "token", "refreshToken");
+      final name = "Synepis";
+      final email = "email@email.com";
+      final password = "password";
 
       test(
         "should get data from the concrete use case",
         () async {
           // arrange
-          when(mockLogin(any, any)).thenAnswer((_) async => Right(user));
+          when(mockRegister(any, any, any)).thenAnswer((_) async => Right(""));
           // act
-          bloc.add(GetLogin("email@email.com", "password"));
-          await untilCalled(mockLogin(any, any));
+          bloc.add(SendRegister(name, email, password));
+          await untilCalled(mockRegister(any, any, any));
           // assert
-          verify(mockLogin("email@email.com", "password"));
+          verify(mockRegister(name, email, password));
         },
       );
 
@@ -62,12 +62,12 @@ void main() {
         "should emit [Loading, Loaded] when data is gotten sucessfully",
         () async {
           // arrange
-          when(mockLogin(any, any)).thenAnswer((_) async => Right(user));
+          when(mockRegister(any, any, any)).thenAnswer((_) async => Right(""));
           // assert later
-          final expected = [Empty(), Loading(), Success(user)];
+          final expected = [Empty(), Loading(), Success("")];
           expectLater(bloc, emitsInOrder(expected));
           // act
-          bloc.add(GetLogin(user.email, user.token));
+          bloc.add(SendRegister(name, email, password));
         },
       );
 
@@ -75,12 +75,12 @@ void main() {
         "should emit [Loading, Error] when data is gotten sucessfully",
         () async {
           // arrange
-          when(mockLogin(any, any)).thenAnswer((_) async => Left(ServerFailure()));
+          when(mockRegister(any, any, any)).thenAnswer((_) async => Left(ServerFailure()));
           // assert later
           final expected = [Empty(), Loading(), Error(SERVER_FAILURE_MESSAGE)];
           expectLater(bloc, emitsInOrder(expected));
           // act
-          bloc.add(GetLogin(user.email, user.token));
+          bloc.add(SendRegister(name, email, password));
         },
       );
 
@@ -88,12 +88,12 @@ void main() {
         "should emit [Loading, Error] with a proper message for the error when getting data fails",
         () async {
           // arrange
-          when(mockLogin(any, any)).thenAnswer((_) async => Left(ConnectionFailure()));
+          when(mockRegister(any, any, any)).thenAnswer((_) async => Left(ConnectionFailure()));
           // assert later
           final expected = [Empty(), Loading(), Error(CONNECTION_FAILURE_MESSAGE)];
           expectLater(bloc, emitsInOrder(expected));
           // act
-          bloc.add(GetLogin(user.email, user.token));
+          bloc.add(SendRegister(name, email, password));
         },
       );
     },

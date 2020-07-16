@@ -18,7 +18,7 @@ class UserRemoteDataSource implements IUserRemoteDataSource {
     try {
       final response = await client.post(config.apiAccount + "login", data: {"email": email, "password": password});
       final resultApi = ResultApi.fromJson(response.data);
-      if (!resultApi.sucess) throw UserOrPasswordException();
+      if (!resultApi.success) throw UserOrPasswordException();
 
       return UserModel.fromJson(resultApi.body);
     } on DioError catch (_) {
@@ -27,11 +27,34 @@ class UserRemoteDataSource implements IUserRemoteDataSource {
   }
 
   @override
-  Future<bool> register(UserModel user) async {
+  Future<ResultApi> register(UserModel user) async {
     try {
-      await client.post(config.apiAccount + "register", data: user.toJson());
-      return true;
-    } catch (e) {
+      final response = await client.post(config.apiAccount + "register", data: user.toJson());
+      return ResultApi.fromJson(response.data);
+    } on DioError catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<ResultApi> forgotPassword(String email) async {
+    try {
+      final response = await client.post(config.apiAccount + "resetpassword", data: {"email": email});
+      return ResultApi.fromJson(response.data);
+    } on DioError catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<ResultApi> confirmForgotPassword(String code, String email, String password) async {
+    try {
+      final response = await client.post(
+        config.apiAccount + "resetpasswordconfirm",
+        data: {"confirmationCode": code, "email": email, "password": password},
+      );
+      return ResultApi.fromJson(response.data);
+    } on DioError catch (_) {
       throw ServerException();
     }
   }

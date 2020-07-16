@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:synepistrading/components/alert.dart';
 
+import '../../../../components/alert.dart';
 import '../../../../containers.dart';
 import '../../../../core/datasources/local_data_source.dart';
 import '../../../../router.dart';
-import '../../presentation/bloc/login_bloc.dart';
+import '../bloc/login/login_bloc.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _currentTheme = sl.get<LocalDataSource>().theme.getTheme();
-    var _email = TextEditingController(text: "paulofera@gmail.com");
-    var _password = TextEditingController(text: "abcabcabc");
+    var _email = TextEditingController();
+    var _password = TextEditingController();
     final _form = GlobalKey<FormState>();
 
     return Scaffold(
@@ -36,17 +36,12 @@ class LoginPage extends StatelessWidget {
                         height: 128,
                         child: Image.asset('assets/images/' + _currentTheme.logo),
                       ),
-                      SizedBox(
-                        height: 60,
-                      ),
+                      SizedBox(height: 30),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(labelText: "E-mail"),
                         controller: _email,
                         validator: context.bloc<LoginBloc>().emailValidation,
-                      ),
-                      SizedBox(
-                        height: 20,
                       ),
                       TextFormField(
                         obscureText: true,
@@ -54,6 +49,7 @@ class LoginPage extends StatelessWidget {
                         controller: _password,
                         validator: context.bloc<LoginBloc>().passwordValidation,
                       ),
+                      SizedBox(height: 5),
                       Align(
                         alignment: Alignment.centerRight,
                         child: FlatButton(
@@ -64,30 +60,26 @@ class LoginPage extends StatelessWidget {
                           },
                         ),
                       ),
+                      SizedBox(height: 5),
                       Container(
-                        height: 50,
+                        height: 40,
                         child: FlatButton(
                           child: state is Loading
                               ? CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))
                               : Text("Acessar", style: TextStyle(fontSize: 18)),
-                          color: Theme.of(context).buttonColor,
-                          disabledColor: Theme.of(context).buttonColor,
-                          textColor: Theme.of(context).textTheme.button.color,
+                          color: _currentTheme.buttonColor,
+                          disabledColor: _currentTheme.buttonDisabledColor,
+                          textColor: _currentTheme.buttonTextColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          // onPressed: state is Loading
-                          //     ? null
-                          //     : () {
-                          //         if (!_form.currentState.validate()) return;
-                          //         _form.currentState.save();
-                          //         bc.bloc<LoginBloc>().add(GetLogin(_email.text, _password.text));
-                          //       },
-                          onPressed: () {
-                            if (!_form.currentState.validate()) return;
-                            _form.currentState.save();
-                            context.bloc<LoginBloc>().add(GetLogin(_email.text, _password.text));
-                          },
+                          onPressed: state is Loading
+                              ? null
+                              : () {
+                                  if (!_form.currentState.validate()) return;
+                                  _form.currentState.save();
+                                  context.bloc<LoginBloc>().add(GetLogin(_email.text, _password.text));
+                                },
                         ),
                       ),
                       Container(

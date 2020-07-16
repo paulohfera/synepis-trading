@@ -1,13 +1,21 @@
 class ResultApi {
-  bool sucess;
+  bool success;
   List<String> messages;
   dynamic body;
 
-  ResultApi(this.sucess, this.messages, this.body);
+  ResultApi(this.success, this.messages, this.body);
 
   ResultApi.fromJson(Map<String, dynamic> json) {
-    sucess = json['sucess'];
+    success = json['success'];
     messages = json['messages'] != null ? json['messages'].cast<String>() : null;
     body = json['body'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "success": success,
+      "messages": messages,
+      "body": body,
+    };
   }
 }

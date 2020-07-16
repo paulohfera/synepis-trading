@@ -19,7 +19,7 @@ void main() {
   });
 
   group("setLoggedUser", () {
-    final userModel = UserModel("name", "email@email.com", "token", "refreshToken");
+    final userModel = UserModel("name", "email@email.com", null, "token", "refreshToken");
     test(
       "should call SharedPreferences to cache data",
       () async {
