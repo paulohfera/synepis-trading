@@ -68,7 +68,7 @@ namespace Synepis.Trading.Api.Account
 			}
 			catch (UsernameExistsException)
 			{
-				return Ok(new ResultValueObject(true, "USER_ALREADY_EXISTIS"));
+				return Ok(new ResultValueObject(false, "USER_ALREADY_EXISTIS"));
 			}
 			catch (Exception e)
 			{
@@ -139,7 +139,7 @@ namespace Synepis.Trading.Api.Account
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e.Message);
+				return BadRequest(new ResultValueObject(false, e.Message));
 			}
 		}
 
@@ -156,17 +156,13 @@ namespace Synepis.Trading.Api.Account
 
 				return Ok(new ResultValueObject(true, "VERIFICATION_CODE_SENT"));
 			}
-			catch (NotAuthorizedException)
-			{
-				return Ok(new ResultValueObject(false, "INVALID_USER_OR_PASSWORD"));
-			}
 			catch (UserNotFoundException)
 			{
 				return Ok(new ResultValueObject(false, "USER_NOT_FOUND"));
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e.Message);
+				return BadRequest(new ResultValueObject(false, e.Message));
 			}
 		}
 
@@ -195,9 +191,8 @@ namespace Synepis.Trading.Api.Account
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e.Message);
+				return BadRequest(new ResultValueObject(false, e.Message));
 			}
 		}
-
 	}
 }
